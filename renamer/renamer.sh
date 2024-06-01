@@ -13,7 +13,6 @@ while getopts cd: opt; do
     c_option=1
     ;;
   d)
-    echo "Found the -d option with parameter value $OPTARG"
     # OPTARG is the option argument in this case dir name
     if [[ -d "$OPTARG" ]]; then
       directory="$OPTARG"
