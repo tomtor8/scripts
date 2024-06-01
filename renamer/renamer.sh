@@ -11,7 +11,8 @@ for file in "$directory"/*; do
     # translate characters underscore and space to dash
     newbasename=$(basename "$file" | tr "_ " "--")
     # renaming the file
-    mv "$file" "$directory$newbasename"
+
+    mv "$file" "$directory/$newbasename"
     # here add verbose if condition
     echo "Renamed ${oldbasename} to ${newbasename}"
   fi
