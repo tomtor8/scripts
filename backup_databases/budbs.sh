@@ -25,3 +25,10 @@ if [[ -f /home/tom/Documents/english/my-books.db ]]; then
 else
   echo "Could not find the my-books.db file in Documents/english directory."
 fi
+
+if [[ -f /home/tom/Documents/english/t_pswd.kdbx ]]; then
+  cp -u /home/tom/Documents/english/t_pswd.kdbx /home/tom/Documents/local_backups/t_pswd-bak.kdbx
+  echo "File t_pswd.kdbx backed up in the local_backups directory."
+else
+  echo "Could not find the t_pswd.kdbx file in Documents/english directory."
+fi
