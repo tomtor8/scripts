@@ -76,7 +76,7 @@ fi
 if [[ -f "$pswdsourcefl" ]]; then
   if backup_is_older "$pswdsourcefl" "$pswdtargetfl"; then
     cp -u "$pswdsourcefl" "$pswdtargetfl"
-    echo "File t_pswd.kdbx backed up in the local_backups directory if ."
+    echo "File t_pswd.kdbx backed up in the local_backups directory."
   else
     echo "Backup of the file t_pswd.kdbx is not necessary."
   fi
