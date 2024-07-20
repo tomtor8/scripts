@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-ensourcefl="/home/tom/Documents/english/en-sk-dict.db"
-entargetfl="/home/tom/Documents/local_backups/en-sk-dict-bak.db"
-husourcefl="/home/tom/Documents/english/hu-sk-dict.db"
-hutargetfl="/home/tom/Documents/local_backups/hu-sk-dict-bak.db"
-booksourcefl="/home/tom/Documents/english/my-books.db"
-booktargetfl="/home/tom/Documents/local_backups/my-books-bak.db"
+ensourcefl="/home/tom/Documents/databases/en-sk-dict.db"
+entargetfl="/run/media/tom/AudioCard/databases_bak/en-sk-dict-bak.db"
+husourcefl="/home/tom/Documents/databases/hu-sk-dict.db"
+hutargetfl="/run/media/tom/AudioCard/databases_bak/hu-sk-dict-bak.db"
+booksourcefl="/home/tom/Documents/databases/my-books.db"
+booktargetfl="/run/media/tom/AudioCard/databases_bak/my-books-bak.db"
 pswdsourcefl="/home/tom/Documents/english/t_pswd.kdbx"
-pswdtargetfl="/home/tom/Documents/local_backups/t_pswd-bak.kdbx"
+pswdtargetfl="/run/media/tom/AudioCard/databases_bak/t_pswd-bak.kdbx"
 
 # check modification times of db files
 function backup_is_older() {
@@ -31,9 +31,14 @@ function backup_is_older() {
   fi
 }
 
-if [[ ! -d /home/tom/Documents/local_backups ]]; then
-  echo "The local_backups directory does not exist, creating one."
-  mkdir /home/tom/Documents/local_backups
+if [[ ! -d /run/media/tom/AudioCard/databases_bak ]]; then
+  echo "The local_backups directory does not exist."
+  if mkdir /run/media/tom/AudioCard/databases_bak; then
+    echo "Created /run/media/tom/AudioCard/databases_bak directory."
+  else
+    echo "Can not create databases_bak directory, probably your AudioCard is not inserted."
+    exit 1
+  fi
 fi
 
 # check if source files exist
@@ -41,7 +46,7 @@ if [[ -f "$ensourcefl" ]]; then
   # english slovak database backup
   if backup_is_older "$ensourcefl" "$entargetfl"; then
     sqlite3 "$ensourcefl" ".backup ${entargetfl}"
-    echo "File en-sk-dict.db backed up in the local_backups directory."
+    echo "en-sk-dict.db backed up in the databases_bak directory on AudioCard"
   else
     echo "Backup of the file en-sk-dict.db is not necessary."
   fi
@@ -53,7 +58,7 @@ if [[ -f "$husourcefl" ]]; then
   # hungarian slovak database backup
   if backup_is_older "$husourcefl" "$hutargetfl"; then
     sqlite3 "$husourcefl" ".backup ${hutargetfl}"
-    echo "File hu-sk-dict.db backed up in the local_backups directory."
+    echo "hu-sk-dict.db backed up in the databases_bak directory on AudioCard"
   else
     echo "Backup of the file hu-sk-dict.db is not necessary."
   fi
@@ -65,7 +70,7 @@ if [[ -f "$booksourcefl" ]]; then
   # my books database backup
   if backup_is_older "$booksourcefl" "$booktargetfl"; then
     sqlite3 "$booksourcefl" ".backup ${booktargetfl}"
-    echo "File my-books.db backed up in the local_backups directory."
+    echo "my-books.db backed up in the databases_bak directory on AudioCard"
   else
     echo "Backup of the file my-books.db is not necessary."
   fi
@@ -76,7 +81,7 @@ fi
 if [[ -f "$pswdsourcefl" ]]; then
   if backup_is_older "$pswdsourcefl" "$pswdtargetfl"; then
     cp -u "$pswdsourcefl" "$pswdtargetfl"
-    echo "File t_pswd.kdbx backed up in the local_backups directory."
+    echo "t_pswd.kdbx backed up in the databases_bak directory on AudioCard"
   else
     echo "Backup of the file t_pswd.kdbx is not necessary."
   fi
