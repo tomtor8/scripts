@@ -54,7 +54,7 @@ for file in "$directory"/*.{jpeg,jpg,png}; do
     echo "Processing file: $file"
     # OCR the file to stdout and replace newline chars with spaces
     # then append to scanned-text.txt
-    tesseract "$file" - | tr "\n" " " >>"$outputfile"
+    tesseract "$file" - -l eng+spa | tr "\n" " " >>"$outputfile"
     # append new line after the section
     # -e flag enables using escape characters
     echo -e "\n" >>"$outputfile"
