@@ -1,0 +1,10 @@
+# comment line; we are creating Bookmarks for pdf documents using `pdftk-java`
+# first item is BookmarkLevel, second item is BookmarkPageNumber, third item is BookmarkTitle
+# items are separated by | (delimiter)
+1|1|Contents
+1|3|Slovak tenses
+2|4|Past tense
+2|6|Present tense
+2|8|Future tense
+1|10|Adjectives
+1|14|Pronouns
