@@ -1,0 +1,4 @@
+git-log-alias ### git alias log ### git config --global alias.ll "log --oneline --graph --all"
+my-email ### personal contact ### my.email@example.com
+current-date ### bash date time ### date +%Y-%m-%d
+ssh-connect ### ssh server ### ssh user@your_server_ip
