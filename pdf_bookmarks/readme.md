@@ -27,3 +27,9 @@ pdftk input.pdf update_info_utf8 bookmarks_utf8.txt output output_with_bookmarks
 ## Note
 - you can have leading or trailing spaces or tabs around the items in the input csv file - the script handles this problem
 - e.g. `1  |23     |   Some title    `
+
+## Application in practice
+- copy the create-bookmarks.sh to home/tom/bin/cb 
+`cp create-bookmarks.sh /home/tom/bin/cb -i`
+- the cb is the name of the shell script used as a system wide command
+- `cb inputfile.csv` 
