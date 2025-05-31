@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Script to transform an input file into a new file with a modified name for pdftk-java bookmarks
+# Script to transform an input file into a new file with a modified name for pdftk-java bookmarks.
+# It also trims leading/trailing spaces/tabs from fields and line ends.
 # Usage: ./create_bookmarks.sh <input_filename>
 
 # Check if an input filename is provided as an argument
@@ -30,12 +31,23 @@ output_file="${file_name_without_ext}-processed.txt"
 
 # Process the input file and generate the new output file
 awk -F'|' '
+    # Trim leading/trailing whitespace (spaces and tabs) from the entire line before processing fields
+    {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", $0)
+    }
+
+    # Process lines that are not comments and have exactly 3 fields after potential trimming
     !/^#/ && NF == 3 {
+        # Trim leading/trailing whitespace from each field
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3)
+
         print "BookmarkBegin"
         print "BookmarkTitle: " $3
         print "BookmarkLevel: " $1
         print "BookmarkPageNumber: " $2
     }
-' "$input_file" >"$output_file"
+' "$input_file" > "$output_file"
 
 echo "Transformation complete. '$output_file' has been created from '$input_file'."

@@ -24,3 +24,6 @@ pdftk input.pdf dump_data_utf8 output bookmarks_utf8.txt
 pdftk input.pdf update_info_utf8 bookmarks_utf8.txt output output_with_bookmarks.pdf
 ```
 
+## Note
+- you can have leading or trailing spaces or tabs around the items in the input csv file - the script handles this problem
+- e.g. `1  |23     |   Some title    `
