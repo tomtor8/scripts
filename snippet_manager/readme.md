@@ -1,125 +1,146 @@
-# Terminal Snippet Launcher
+# Snippet Manager Script
 
-This project provides a simple yet powerful shell script to manage and quickly access your frequently used terminal snippets. It leverages `fzf` for fuzzy searching and your system's clipboard utility (`wl-copy` for Wayland or `xclip` for X11) to copy selected snippets to your clipboard.
-
-Unlike a full-fledged snippet manager, this tool focuses on a streamlined workflow where your snippets are stored in a single, human-readable CSV file that you can edit manually.
+This `snippet-manager.sh` script provides a convenient way to manage and quickly copy frequently used text snippets or file contents to your clipboard using `fzf` for fuzzy searching. It's designed to streamline your workflow by allowing you to search through a collection of snippets by name or tags and then copy the relevant content.
 
 ## Features
 
-- **Fuzzy Search:** Quickly find snippets by their name or associated tags using `fzf`.
-- **Clipboard Integration:** Copy the selected snippet content directly to your clipboard.
-- **Simple Storage:** All snippets are stored in a single CSV file, making them easy to manage with any text editor.
-- **Custom Delimiter:** Uses a robust delimiter (`###`) to avoid conflicts with snippet content.
-- **Clean Copy:** Automatically strips leading/trailing whitespace and ensures no trailing newline character is copied.
-- **Preview:** Shows a preview of the snippet content directly in `fzf`.
+- **Fuzzy Search:** Quickly find snippets using `fzf`.
+- **Clipboard Integration:** Copies selected snippet content or file content directly to your system clipboard.
+- **File Content Support:** If a snippet's content is a valid file path, the script will copy the file's content instead of the path itself.
+- **Newline Transformation:** Automatically converts `*` characters within a snippet to newlines when copying, useful for multi-line snippets.
+- **Responsive Preview:** Displays a preview of the snippet or file content in `fzf` before selection.
 
 ## Prerequisites
 
-Before using the snippet launcher, ensure you have the following tools installed on your Linux system (e.g., Fedora 42):
+Before using this script, ensure you have the following installed:
 
-- **`fzf`**: A command-line fuzzy finder.
+- `fzf`: A command-line fuzzy finder.
+  - Installation: `git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install` (or use your system's package manager).
+- `awk`: A text processing tool (usually pre-installed on Linux/macOS).
+- `sed`: A stream editor (usually pre-installed on Linux/macOS).
+- `tr`: A utility for translating or deleting characters (usually pre-installed on Linux/macOS).
 
-```
-sudo dnf install fzf
-```
-- **Clipboard Utility**:
-    - For **Wayland** (default on Fedora 42 Gnome):
+- **Clipboard Utility:**
+  - Wayland: wl-copy (from wl-clipboard package).
+  - X11: xclip.
 
-```
-sudo dnf install wl-clipboard # Provides wl-copy
-```
-    - For **X11**:
+## Setup
 
-```
-sudo dnf install xclip
-```
+1. **Save the Script:**
+Save the provided `snippet-manager.sh` script to a convenient location (e.g., ~/bin/snippet-manager.sh).
 
-- _(You can check your display server with `echo $XDG_SESSION_TYPE`)_
-- **`awk`**: Usually pre-installed on Linux.
-- **`sed`**: Usually pre-installed on Linux.
-- **`tr`**: Usually pre-installed on Linux.
+2. **Make Executable:**
 
-## Installation
-
-1. **Create the script file:** Save the script content (from our previous conversation) into a file named `snippet_launcher.sh` (or any name you prefer).
-
-2. **Make the script executable:**
-
-```
-chmod +x snippet_launcher.sh
-```
-3. **Move the script to your PATH:** It's recommended to place the script in a directory that's already in your system's `PATH` environment variable, such as `~/.local/bin/`.
-
-```
-mkdir -p ~/.local/bin
-mv snippet_launcher.sh ~/.local/bin/
+```bash
+chmod +x ~/bin/snippet-manager.sh
 ```
 
-If `~/.local/bin` is not in your `PATH`, add the following line to your shell's configuration file (e.g., `~/.bashrc` or `~/.zshrc`):
+3. **Create snippet file:**
+The script expects a CSV file named `snippets.csv` at `~/.local/share/snippets/snippets.csv`.
 
-```
-export PATH="$HOME/.local/bin:$PATH"
-```
+Create the directory:
 
-Then, apply the changes by sourcing your config file:
-
-```
-source ~/.bashrc # or source ~/.zshrc
+```bash
+mkdir -p ~/.local/share/snippets
 ```
 
-## Creating Your Snippets CSV File
-
-The snippet launcher reads your snippets from a single CSV file.
-
-1. **Location:** Create the `snippets.csv` file in the following directory:
-
-```
-~/.local/share/snippets/snippets.csv
-```
-
-You can create the directory structure using:
-
-```
-mkdir -p ~/.local/share/snippets/
+Create the `snippets.csv` file:
+```bash
 touch ~/.local/share/snippets/snippets.csv
 ```
-2. **Format:** Each line in `snippets.csv` represents a single snippet and should follow this format:
 
-```
-Snippet Name###tags separated by spaces###actual snippet content
-```
-    - **`Snippet Name`**: A unique, descriptive name for your snippet. This is the primary identifier you'll see and search by.
-    - **`###`**: This is the **delimiter** that separates the fields. It's chosen to be unlikely to appear within your actual snippet content.
-    - **`tags separated by spaces`**: A space-separated list of keywords or categories that describe your snippet. These tags are also searchable by `fzf`.
-    - **`actual snippet content`**: The full text or command you want to copy to your clipboard.
+4. **Configure** `snippets.csv`:
+The snippets.csv file uses `###` as a delimiter and should follow this format:
 
-3. **Example `snippets.csv` content:**
+`Snippet Name###tags###snippet content or file path`
 
-```
-git-log-alias###git alias log###git config --global alias.ll "log --oneline --graph --all"
-my-email###personal contact###my.email@example.com
-current-date###bash date time###date +%Y-%m-%d
-ssh-connect###ssh server###ssh user@your_server_ip
-```
-4. **Editing Snippets:** To add, edit, or delete snippets, simply open `~/.local/share/snippets/snippets.csv` with your favorite text editor and modify it directly.
+ - _Snippet Name:_ A descriptive name for your snippet.
+- _tags:_ Keywords to help you search (e.g., bash, utility, git).
+- _snippet content or file path:_
+  - The actual text you want to copy.
+  - **OR** a valid file path (e.g., `/home/user/my_long_script.sh`). If it's a file path, the script will copy the _content_ of that file.
 
-```
-nvim ~/.local/share/snippets/snippets.csv # or gedit, nano, etc.
+**Example** `snippets.csv` **entries:**
+
+```text
+Hello World###greeting,test###echo "Hello, World!"
+My Long Script###script,bash,utility###/home/user/scripts/long_script.sh
+Multi-line Example###text,example###Line 1*Line 2*Line 3
+Empty File Example###test,empty###/home/user/empty_file.txt
 ```
 
 ## Usage
+You can run the script with different commands to perform specific actions:
 
-Once installed and your `snippets.csv` file is set up, simply run the script from your terminal:
+- **No Command** (Default Behavior):
 
+```bash
+snippet-manager.sh
 ```
-snippet_launcher.sh
+
+When run without any arguments, the script will launch `fzf`. This allows you to interactively search, preview, and select a snippet from your `snippets.csv` file to copy its content (or the content of a referenced file) to your clipboard.
+
+- `add` **Command:**
+
+```bash
+snippet-manager.sh add
 ```
 
-This will launch `fzf` in an interactive mode:
+This command allows you to interactively add a new snippet to your `snippets.csv` file. You will be prompted for the snippet name, tags, and the content (or file path). For multi-line content, you can type your snippet and press `Ctrl+D` on a new line to finish input.
 
-1. **Search:** Start typing to fuzzy search for snippets. `fzf` will match against both the **Snippet Name** and the **Tags**.
-2. **Preview:** A preview pane will display the content of the currently highlighted snippet, titled "--- Snippet ---".
-3. **Copy:** Press `Enter` on the selected snippet. Its content (the third column) will be automatically copied to your system's clipboard.
-4. **Exit:** Press `Ctrl+C` or `Esc` to exit `fzf` without copying.
+- `edit` **Command:**
 
-Enjoy your efficient terminal snippet management!
+```bash
+snippet-manager.sh edit
+```
+
+This command opens your `snippets.csv` file in your preferred text editor (determined by the `$EDITOR` environment variable, or `nano` if `$EDITOR` is not set). This provides a quick way to manually add, modify, or delete snippets directly in the CSV file. Remember to save and close the editor after making changes.
+
+- `help` **Command**:
+
+```bash
+snippet-manager.sh help
+```
+
+This command displays a concise help message, outlining the script's usage, available commands, and the expected format of the `snippets.csv file`.
+
+- `tags` **Command:**
+
+```bash
+snippet-manager.sh tags
+snippet-manager.sh tags > snippet-manager-tags.txt
+snippet-manager.sh tags | bat
+```
+
+This command extracts and lists all unique tags found in your `snippets.csv` file. The tags are sorted alphabetically. You can pipe or redirect the result as you wish.
+
+- **Unknown Command:**
+
+```bash
+snippet-manager.sh [any_invalid_command]
+```
+
+If you provide an argument that is not a recognized command (e.g., `snippet-manager.sh foo`), the script will print an error message indicating the unknown command, then display the standard help message, and exit with a non-zero status.
+
+### Interaction
+
+- **Search:** Type to filter snippets by name or tags.
+- **Navigate:** Use arrow keys (`Up`/`Down`) to move between results.
+- **Preview:** The right pane will show a preview:
+  - If the third field is a file path, it will display "--- Snippet in a File ---" followed by the file's content; if the file is empty, then it will display "--- Empty file ---".
+  - Otherwise, it will display "--- Snippet ---" followed by the first 200 characters of the snippet content.
+- **Select & Copy:** Press `Enter` to copy the selected snippet's content (or file's content) to your clipboard.
+- **Exit:** Press `Esc` or `Ctrl+C` to exit without copying.
+
+### How it Works (Copy Logic)
+
+When you select a snippet and press `Enter`, the script performs the following checks on the third field (the snippet content/path):
+
+1.  **Is it a valid, non-empty file?**
+  - If `Yes`: The _entire content_ of the file is copied to the clipboard.
+  - If `No` (but it's an existing, empty file): A message "Selected file is empty." is printed to `stderr`, and nothing is copied.
+2.  **Is it not a file (or the file check failed)?**
+The script then checks if the snippet content contains a `*` character anywhere.
+    - If `Yes`: All `*` characters in the snippet are replaced with newline characters (`\n`), and the resulting multi-line text is copied to the clipboard.
+    - If `No`: The snippet content is copied to the clipboard as is.
+M_U

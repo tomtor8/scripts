@@ -1,4 +1,7 @@
-git-log-alias ### git alias log ### git config --global alias.ll "log --oneline --graph --all"
-my-email ### personal contact ### my.email@example.com
-current-date ### bash date time ### date +%Y-%m-%d
-ssh-connect ### ssh server ### ssh user@your_server_ip
+   my-email   ### email  ###   bartus.simpson@homerland.com   
+my-address###street,home###Abracadabra 30
+password###secrets,passwords###bandalero45
+gastritis###pathology,biopsy,git###/home/tom/.local/share/snippets/gastritis.txt
+empty### ###/home/tom/.local/share/snippets/emptyfile.txt
+multiline###test###This is my multiline text.*The second line.*The third line.
+phone-home###home,private###+111933532443
