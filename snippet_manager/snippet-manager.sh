@@ -159,13 +159,15 @@ show_help() {
   echo ""
   echo "Commands:"
   echo "  (no command)  : Launch fzf to select and copy a snippet."
+  echo "  add           : Add new snippet interactively to snippets.csv."
+  echo "  edit          : Edit snippets.csv using your default editor."
   echo "  tags          : List all unique tags used in snippets.csv."
   echo "  help          : Show this help message."
   echo ""
   echo "Snippet CSV file: $SNIPPET_FILE"
   echo "Location of other snippet files: $HOME/Templates/snippets/"
   echo "CSV format: 'Snippet Name${SNIPPET_DELIMITER}tag1,tag2${SNIPPET_DELIMITER}snippet content or file path'"
-  echo "Use '*' in the snippet instead of a newline character."
+  echo "While creating a snippet use '*' instead of a newline character."
 }
 
 # Run functions - if empty argument, default to select and copy snippet
