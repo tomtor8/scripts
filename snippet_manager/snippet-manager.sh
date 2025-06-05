@@ -85,14 +85,9 @@ select_and_copy_snippet() {
         echo "Selected file is empty." >&2
       else
         # If not a file, process the snippet content
-        # Check for '*' character anywhere in the snippet
-        if [[ "$snippet_content" == *"*"* ]]; then
-          echo "$snippet_content" | tr '*' '\n' | $CLIP_TOOL
-          echo "Snippet content with '*' transformed to newlines copied to clipboard."
-        else
-          echo -n "$snippet_content" | $CLIP_TOOL
-          echo "Snippet copied to clipboard."
-        fi
+        echo -n "$snippet_content" | $CLIP_TOOL
+        echo "Snippet copied to clipboard."
+
       fi
     else
       echo "Selected line has no snippet content or parsing failed." >&2
@@ -167,7 +162,6 @@ show_help() {
   echo "Snippet CSV file: $SNIPPET_FILE"
   echo "Location of other snippet files: $HOME/Templates/snippets/"
   echo "CSV format: 'Snippet Name${SNIPPET_DELIMITER}tag1,tag2${SNIPPET_DELIMITER}snippet content or file path'"
-  echo "While creating a snippet use '*' instead of a newline character."
 }
 
 # Run functions - if empty argument, default to select and copy snippet
