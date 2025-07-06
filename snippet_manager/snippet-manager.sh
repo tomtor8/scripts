@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-SNIPPET_FILE="$HOME/Templates/snippets/snippets.csv" # Path to your snippets CSV file
+SNIPPET_FILE="$HOME/Templates/snippets.csv" # Path to your snippets CSV file
 # New delimiter
 SNIPPET_DELIMITER="###"
 FZF_DISPLAY_DELIMITER="::" # A consistent delimiter for fzf display, less likely to be in snippet_content
