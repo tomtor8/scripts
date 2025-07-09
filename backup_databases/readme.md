@@ -9,3 +9,4 @@
 - run the script in the `$HOME/bin` directory using `budbs` command
 - budbs stands for back up databases
   -test change
+  - hypr test
